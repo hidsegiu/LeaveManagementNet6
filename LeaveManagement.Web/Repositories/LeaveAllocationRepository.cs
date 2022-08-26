@@ -15,7 +15,10 @@ namespace LeaveManagement.Web.Repositories
         private readonly ILeaveTypeRepository leaveTypeRepository;
         private readonly IMapper mapper;
 
-        public LeaveAllocationRepository(ApplicationDbContext context, UserManager<Employee> userManager, ILeaveTypeRepository leaveTypeRepository, IMapper mapper) : base(context)
+        public LeaveAllocationRepository(ApplicationDbContext context,
+            UserManager<Employee> userManager,
+            ILeaveTypeRepository leaveTypeRepository,
+            IMapper mapper) : base(context)
         {
             this.context = context;
             this.userManager = userManager;
@@ -25,12 +28,17 @@ namespace LeaveManagement.Web.Repositories
 
         public async Task<bool> AllocationExists(string employeeId, int leaveTypeId, int period)
         {
-            return await context.LeaveAllocations.AnyAsync(q => q.EmployeeId == employeeId && q.LeaveTypeId == leaveTypeId && q.Period == period);
+            return await context.LeaveAllocations.AnyAsync(q => q.EmployeeId == employeeId
+                                                                && q.LeaveTypeId == leaveTypeId
+                                                                && q.Period == period);
         }
 
         public async Task<EmployeeAllocationVM> GetEmployeeAllocations(string employeeId)
         {
-            var allocations = await context.LeaveAllocations.Include(q => q.LeaveType).Where(q => q.EmployeeId == employeeId).ToListAsync();
+            var allocations = await context.LeaveAllocations
+                .Include(q => q.LeaveType)
+                .Where(q => q.EmployeeId == employeeId)
+                .ToListAsync();
 
             var employee = await userManager.FindByIdAsync(employeeId);
 
@@ -42,7 +50,9 @@ namespace LeaveManagement.Web.Repositories
 
         public async Task<LeaveAllocationEditVM> GetEmployeeAllocation(int id)
         {
-            var allocation = await context.LeaveAllocations.Include(q => q.LeaveType).FirstOrDefaultAsync(q => q.Id == id);
+            var allocation = await context.LeaveAllocations
+                .Include(q => q.LeaveType)
+                .FirstOrDefaultAsync(q => q.Id == id);
 
             if (allocation == null)
             {
@@ -93,6 +103,11 @@ namespace LeaveManagement.Web.Repositories
             await UpdateAsync(leaveAllocation);
 
             return true;
+        }
+
+        public async Task<LeaveAllocation?> GetEmployeeAllocation(string employeeId, int leaveTypeId)
+        {
+            return await context.LeaveAllocations.FirstOrDefaultAsync(q => q.EmployeeId == employeeId && q.LeaveTypeId == leaveTypeId);
         }
     }
 }

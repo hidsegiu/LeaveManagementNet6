@@ -3,6 +3,7 @@ using LeaveManagement.Web.Constants;
 using LeaveManagement.Web.Contracts;
 using LeaveManagement.Web.Data;
 using LeaveManagement.Web.Models;
+using LeaveManagement.Web.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +17,18 @@ namespace LeaveManagement.Web.Controllers
         private readonly ILeaveAllocationRepository leaveAllocationRepository;
         private readonly ILeaveTypeRepository leaveTypeRepository;
 
-        public EmployeesController(UserManager<Employee> userManager, IMapper mapper, ILeaveAllocationRepository leaveAllocationRepository, ILeaveTypeRepository leaveTypeRepository)
+        public EmployeesController(UserManager<Employee> userManager,
+            IMapper mapper, ILeaveAllocationRepository leaveAllocationRepository,
+            ILeaveTypeRepository leaveTypeRepository)
         {
             this.userManager = userManager;
             this.mapper = mapper;
             this.leaveAllocationRepository = leaveAllocationRepository;
             this.leaveTypeRepository = leaveTypeRepository;
         }
+
         // GET: EmployeesController
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             var employees = await userManager.GetUsersInRoleAsync(Roles.User);
             var model = mapper.Map<List<EmployeeListVM>>(employees);
@@ -67,7 +71,7 @@ namespace LeaveManagement.Web.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "An Error Has Ocurred. Please Try Again Later.");
+                ModelState.AddModelError(string.Empty, "An Error Has Occurred. Please Try Again Later");
             }
 
             model.Employee = mapper.Map<EmployeeListVM>(await userManager.FindByIdAsync(model.EmployeeId));

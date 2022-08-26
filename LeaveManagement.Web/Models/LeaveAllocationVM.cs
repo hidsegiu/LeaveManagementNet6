@@ -8,8 +8,8 @@ namespace LeaveManagement.Web.Models
         public int Id { get; set; }
 
         [Required]
-        [Range(1, 50, ErrorMessage = "Invalid Number Entered")]
         [Display(Name = "Number Of Days")]
+        [Range(1, 50, ErrorMessage = "Invalid Number Entered")]
         public int NumberOfDays { get; set; }
 
         [Required]
