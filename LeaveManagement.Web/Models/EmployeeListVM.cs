@@ -12,8 +12,10 @@ namespace LeaveManagement.Web.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
+        [DataType(DataType.Date)]
         [Display(Name = "Date Joined")]
-        public string DateJoined { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime DateJoined { get; set; }
 
         [Display(Name = "Email Address")]
         public string Email { get; set; }
