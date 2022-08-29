@@ -1,29 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using LeaveManagement.Web.Data;
-using LeaveManagement.Web.Models;
-using AutoMapper;
-using LeaveManagement.Web.Contracts;
+using LeaveManagement.Common.Models;
+using LeaveManagement.Application.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using LeaveManagement.Web.Constants;
+using LeaveManagement.Common.Constants;
 
-namespace LeaveManagement.Web.Controllers
+namespace LeaveManagement.Common.Controllers
 {
     [Authorize]
     public class LeaveRequestsController : Controller
     {
         private readonly ILeaveRequestRepository leaveRequestRepository;
         private readonly ILeaveTypeRepository leaveTypeRepository;
+        private readonly ILogger<LeaveRequestsController> logger;
 
-        public LeaveRequestsController(ILeaveRequestRepository leaveRequestRepository, ILeaveTypeRepository leaveTypeRepository)
+        public LeaveRequestsController(ILeaveRequestRepository leaveRequestRepository, ILeaveTypeRepository leaveTypeRepository, ILogger<LeaveRequestsController> logger)
         {
             this.leaveRequestRepository = leaveRequestRepository;
             this.leaveTypeRepository = leaveTypeRepository;
+            this.logger = logger;
         }
 
         [Authorize(Roles = Roles.Administrator)]
@@ -61,7 +56,7 @@ namespace LeaveManagement.Web.Controllers
             }
             catch (Exception ex)
             {
-
+                logger.LogError(ex, "Error Approving Request");
                 throw;
             }
             return RedirectToAction(nameof(Index));
@@ -77,7 +72,7 @@ namespace LeaveManagement.Web.Controllers
             }
             catch (Exception ex)
             {
-
+                logger.LogError(ex, "Error Cancelling Leave Request");
                 throw;
             }
             return RedirectToAction(nameof(MyLeave));
@@ -114,6 +109,7 @@ namespace LeaveManagement.Web.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Error Creating Leave Request");
                 ModelState.AddModelError(string.Empty, "An Error Has Occurred. Please Try Again Later");
             }
 
